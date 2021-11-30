@@ -1,5 +1,1 @@
-1. Run a webserver
-
-`python -m SimpleHTTPServer
-
-2. Navigate to localhost:8000
+1. open index.html in a browser.
