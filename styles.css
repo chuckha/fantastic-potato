@@ -2,6 +2,8 @@ body {
     background: #999;
 }
 
-canvas {
-    background: white;
+#map {
+    background: #fff;
+    height:500px;
+    width: 500px;
 }
