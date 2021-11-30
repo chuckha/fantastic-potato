@@ -30,13 +30,10 @@ map.addLayer({
 });
 
 var source = map.getSource('japan');
-console.log(source)
-
 
 // add hiragana
 const data = source._data.features.map(feat => ({ja: feat.properties.name_ja, fu: feat.properties.hiragana}))
 const quiz = shuffle(data)
-console.log(quiz)
 
 function shuffle(data) {
     var tmp;
