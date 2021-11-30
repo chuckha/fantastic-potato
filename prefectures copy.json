@@ -1,4 +1,4 @@
-const prefectures = {
+{
     "type": "FeatureCollection",
     "name": "ne_10m_admin_1_states_provinces",
     "crs": {
@@ -2066,7 +2066,7 @@ const prefectures = {
             "properties": {
                 "name": "Ōita",
                 "name_en": "Ōita Prefecture",
-                "name_ja": "大分県",
+                "name_ja": "大分県"
             },
             "geometry": {
                 "type": "Polygon",
@@ -4188,7 +4188,7 @@ const prefectures = {
             "properties": {
                 "name": "Saga",
                 "name_en": "Saga Prefecture",
-                "name_ja": "佐賀県",
+                "name_ja": "佐賀県"
             },
             "geometry": {
                 "type": "Polygon",
