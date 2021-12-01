@@ -51,22 +51,39 @@ function getRandomInt(max) {
 }
 
 class Game {
-    constructor(data, label) {
+    constructor(data, labelEl, clicksEl) {
         this.data = data;
-        this.label = label;
+        this.label = labelEl;
         this.updateLabel();
+        this.erroneousClicks = 0;
+        this.clicksEl = clicksEl;
     }
 
     updateLabel() {
         this.label.innerHTML = '<ruby>'+data[0].ja+'<rt>'+data[0].fu+'</rt></ruby>';
     }
 
+    victory() {
+        localStorage.setItem(Date.now(), this.erroneousClicks);
+        this.label.innerHTML = 'Good job! Refresh to play again!';
+    }
+
+    updateErroneousClicks() {
+        this.erroneousClicks++;
+        this.clicksEl.innerText = this.erroneousClicks;
+    }
+
     correct(input) {
         if (input === this.data[0].ja) {
             this.data.shift();
+            if (this.data.length == 0) {
+                this.victory();
+                return true;
+            }
             this.updateLabel();
             return true;
         }
+        this.updateErroneousClicks();
         return false;
     }
 }
@@ -98,13 +115,17 @@ class Filler {
     }
 }
 
-const game = new Game(quiz, document.getElementById('current'));
+const game = new Game(quiz, document.getElementById('current'), document.getElementById('error-clicks'));
 const filler = new Filler();
 const correct = [];
 
 map.on('click', 'prefectures', function (e) {
     // ignore clicks on already correctly guessed prefectures
     if (correct.includes(e.features[0].id)) {
+        return;
+    }
+    // ignore clicks on already clicked prefectures
+    if (e.features[0].state.clicked === true) {
         return;
     }
     const clickedon = e.features[0].properties.name_ja;
