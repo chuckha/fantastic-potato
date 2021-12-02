@@ -25,12 +25,10 @@ func NewHTTPAdapter(usecases adapterUsecases) *HTTPAdapter {
 	}
 }
 
-func NewServer(adapter *HTTPAdapter, mux *http.ServeMux, addr string) *http.Server {
+func NewAPIHandler(adapter *HTTPAdapter) *http.ServeMux {
+	mux := http.NewServeMux()
 	mux.HandleFunc("/get-country-data", adapter.getCountryData)
-	return &http.Server{
-		Handler: mux,
-		Addr:    addr,
-	}
+	return mux
 }
 
 func (h *HTTPAdapter) getCountryData(w http.ResponseWriter, r *http.Request) {

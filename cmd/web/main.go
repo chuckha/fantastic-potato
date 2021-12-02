@@ -1,8 +1,6 @@
 package main
 
 import (
-	"net/http"
-
 	"github.com/chuckha/geogame6/internal/adapters/web"
 	"github.com/chuckha/geogame6/internal/infrastructure/encdec/json"
 	"github.com/chuckha/geogame6/internal/infrastructure/gatherers/geojson/local"
@@ -15,9 +13,9 @@ func main() {
 	gatherer := local.NewGatherer(statesFile, out)
 	encdec := &json.EncDec{}
 	countryData := usecases.NewCountryData(gatherer, encdec)
-	adapter := web.NewHTTPAdapter(countryData)
-	mux := http.NewServeMux()
-	server := web.NewServer(adapter, mux, ":8888")
+	apiAdapter := web.NewHTTPAdapter(countryData)
+	publicAdapter := web.NewPublicHandler(&web.UIAdapter{}, apiAdapter)
+	server := web.NewServer(publicAdapter, ":8888")
 	server.ListenAndServe()
 }
 
