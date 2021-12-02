@@ -1,4 +1,4 @@
-const prefectures = {
+const geojson = {
     "type": "FeatureCollection",
     "name": "ne_10m_admin_1_states_provinces",
     "crs": {

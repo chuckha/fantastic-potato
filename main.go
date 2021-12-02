@@ -42,4 +42,5 @@ type Properties struct {
 	Name         string `json:"name"`
 	NameEnglish  string `json:"name_en"`
 	NameJapanese string `json:"name_ja"`
+	Hiragana     string `json:"hiragana"`
 }
