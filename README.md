@@ -1,1 +1,1 @@
-1. open index.html in a browser.
+# Geogame.xyz
