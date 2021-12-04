@@ -33,7 +33,11 @@ func NewAPIHandler(adapter *HTTPAdapter) *http.ServeMux {
 
 func (h *HTTPAdapter) getCountryData(w http.ResponseWriter, r *http.Request) {
 	country := r.URL.Query().Get("country")
-	in := &usecases.GetCountryDataInput{Name: country}
+	targetLang := r.URL.Query().Get("target_language")
+	if targetLang == "" {
+		targetLang = "japanese"
+	}
+	in := &usecases.GetCountryDataInput{Name: country, TargetLanguage: targetLang}
 	out, err := h.usecases.GetCountryData(r.Context(), in)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "%+v", err)

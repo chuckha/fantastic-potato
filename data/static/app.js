@@ -1,18 +1,18 @@
-const country = "japan"
+const country = "japan";
+const tl = "japanese";
 
-fetch(`/api/get-country-data?country=${country}`)
+fetch(`/api/get-country-data?country=${country}&target_language=${tl}`)
 .then(resp => resp.json())
 .then(callback)
 
-function callback(geojson) {
+function callback(obj) {
+    console.log(obj)
     const mapId = 'map';
-   const centerLon = 137;
-   const centerLat = 38;
-   const defaultZoom = 5;
+    const centerLon = obj.center_lon;
+    const centerLat = obj.center_lat;
+    const defaultZoom = obj.default_zoom;
+    const geojson = JSON.parse(obj.geojson);
 
-    // const centerLon = -95.7;
-    // const centerLat = 37.1;
-    // const defaultZoom = 3;
     var map = new maplibregl.Map({
         container: mapId,
         center: [centerLon, centerLat],
@@ -78,6 +78,7 @@ function callback(geojson) {
     }
 
     // add hiragana
+    console.log(source._data.features)
     const data = source._data.features.map(extractName)
     const quiz = shuffle(data)
 

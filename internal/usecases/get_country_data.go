@@ -30,10 +30,14 @@ func NewCountryData(gatherer gatherer, encdec encdec) *CountryData {
 }
 
 type GetCountryDataInput struct {
-	Name string
+	Name           string
+	TargetLanguage string
 }
 type GetCountryDataOutput struct {
-	RawData []byte
+	CenterLat   float64
+	CenterLon   float64
+	DefaultZoom int
+	RawData     []byte
 }
 
 func (g *CountryData) GetCountryData(ctx context.Context, in *GetCountryDataInput) (*GetCountryDataOutput, error) {
@@ -47,12 +51,17 @@ func (g *CountryData) GetCountryData(ctx context.Context, in *GetCountryDataInpu
 		return nil, errors.WithStack(err)
 	}
 	features := make([]*domain.Feature, len(fc1.Features))
+	languagePropertyKey, err := languageToProperty(in.TargetLanguage)
+	if err != nil {
+		return nil, err
+	}
+
 	for i, feature := range fc1.Features {
 		name, ok := feature.Properties["name"].(string)
 		if !ok {
 			return nil, errors.Errorf("invalid feature name type: %T", feature.Properties["name"])
 		}
-		jp, ok := feature.Properties["name_ja"].(string)
+		tl, ok := feature.Properties[languagePropertyKey].(string)
 		if !ok {
 			return nil, errors.Errorf("(%s) invalid japanese name type: %T", name, feature.Properties["name_jp"])
 		}
@@ -60,7 +69,7 @@ func (g *CountryData) GetCountryData(ctx context.Context, in *GetCountryDataInpu
 		if !ok {
 			return nil, errors.Errorf("(%s) invalid english name type: %T", name, feature.Properties["name_en"])
 		}
-		prop, err := domain.NewProperties(name, jp, en, rubyLookup(jp))
+		prop, err := domain.NewProperties(name, tl, en, rubyLookup(tl))
 		if err != nil {
 			return nil, err
 		}
@@ -78,9 +87,37 @@ func (g *CountryData) GetCountryData(ctx context.Context, in *GetCountryDataInpu
 	if err != nil {
 		return nil, err
 	}
+	lat, lon, zoom := countryMapData(in.Name)
 	return &GetCountryDataOutput{
-		RawData: cleanData,
+		RawData:     cleanData,
+		CenterLat:   lat,
+		CenterLon:   lon,
+		DefaultZoom: zoom,
 	}, nil
+}
+
+func languageToProperty(in string) (string, error) {
+	switch in {
+	case "japanese":
+		return "name_ja", nil
+	case "english":
+		return "name_en", nil
+	case "french":
+		return "name_fr", nil
+	default:
+		return "", errors.Errorf("unsupported language %q", in)
+	}
+}
+
+func countryMapData(in string) (float64, float64, int) {
+	switch in {
+	case "japan":
+		return 38.0, 137.0, 5
+	case "united states of america":
+		return 37.1, -95.7, 3
+	default:
+		return 0, 0, 1
+	}
 }
 
 func rubyLookup(in string) string {
