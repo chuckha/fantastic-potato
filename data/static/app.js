@@ -1,4 +1,4 @@
-const country = "united states of america"
+const country = "japan"
 
 fetch(`/api/get-country-data?country=${country}`)
 .then(resp => resp.json())
@@ -6,13 +6,13 @@ fetch(`/api/get-country-data?country=${country}`)
 
 function callback(geojson) {
     const mapId = 'map';
-//    const centerLon = 137;
-//    const centerLat = 38;
-//    const defaultZoom = 5;
+   const centerLon = 137;
+   const centerLat = 38;
+   const defaultZoom = 5;
 
-    const centerLon = -95.7;
-    const centerLat = 37.1;
-    const defaultZoom = 3;
+    // const centerLon = -95.7;
+    // const centerLat = 37.1;
+    // const defaultZoom = 3;
     var map = new maplibregl.Map({
         container: mapId,
         center: [centerLon, centerLat],
