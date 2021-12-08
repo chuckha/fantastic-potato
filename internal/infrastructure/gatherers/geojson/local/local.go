@@ -64,6 +64,8 @@ func countryToISO(country string) (string, error) {
 	switch strings.ToLower(country) {
 	case "japan":
 		return "JP", nil
+	case "korea":
+		return "KR", nil
 	case "united states of america":
 		return "US", nil
 	default:

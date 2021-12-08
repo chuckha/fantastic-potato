@@ -104,6 +104,8 @@ func languageToProperty(in string) (string, error) {
 		return "name_en", nil
 	case "french":
 		return "name_fr", nil
+	case "korean":
+		return "name_ko", nil
 	default:
 		return "", errors.Errorf("unsupported language %q", in)
 	}
@@ -113,6 +115,8 @@ func countryMapData(in string) (float64, float64, int) {
 	switch in {
 	case "japan":
 		return 38.0, 137.0, 5
+	case "korea":
+		return 36.49869367154783, 127.91915640742643, 6
 	case "united states of america":
 		return 37.1, -95.7, 3
 	default:

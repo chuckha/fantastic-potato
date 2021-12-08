@@ -1,25 +1,34 @@
 const country = "japan";
 const tl = "japanese";
 
+const mapId = 'map';
+const sourceId = 'country';
+const divisionId = 'division';
+var map = new maplibregl.Map({
+    container: mapId,
+});
+
 fetch(`/api/get-country-data?country=${country}&target_language=${tl}`)
 .then(resp => resp.json())
 .then(callback)
 
+const el = document.getElementById("korea")
+el.addEventListener("click", () => {
+    clear();
+    fetch(`/api/get-country-data?country=korea&target_language=korean`)
+    .then(resp => resp.json())
+    .then(callback)
+});
+
+function clear() {
+    map.removeLayer(divisionId);
+    map.removeSource(sourceId);
+}
+
 function callback(obj) {
-    console.log(obj)
-    const mapId = 'map';
-    const centerLon = obj.center_lon;
-    const centerLat = obj.center_lat;
-    const defaultZoom = obj.default_zoom;
     const geojson = JSON.parse(obj.geojson);
-
-    var map = new maplibregl.Map({
-        container: mapId,
-        center: [centerLon, centerLat],
-        zoom: defaultZoom
-    });
-
-    const sourceId = 'country'
+    map.setZoom(obj.default_zoom);
+    map.setCenter([obj.center_lon, obj.center_lat]);
 
     map.addSource(sourceId, {
         type: 'geojson',
@@ -27,7 +36,6 @@ function callback(obj) {
         generateId: true
     });
 
-    const divisionId = 'division';
     const correctColor = 'rgba(70, 192, 138, 0.19)';
     const incorrectColor = 'rgba(182, 92, 138, 0.19)';
     const defaultColor = 'rgba(222, 222, 222, 0.19)';
@@ -78,7 +86,7 @@ function callback(obj) {
     }
 
     // add hiragana
-    console.log(source._data.features)
+//    console.log(source._data.features)
     const data = source._data.features.map(extractName)
     const quiz = shuffle(data)
 
