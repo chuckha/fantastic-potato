@@ -65,11 +65,7 @@ func (g *CountryData) GetCountryData(ctx context.Context, in *GetCountryDataInpu
 		if !ok {
 			return nil, errors.Errorf("(%s) invalid japanese name type: %T", name, feature.Properties["name_jp"])
 		}
-		en, ok := feature.Properties["name_en"].(string)
-		if !ok {
-			return nil, errors.Errorf("(%s) invalid english name type: %T", name, feature.Properties["name_en"])
-		}
-		prop, err := domain.NewProperties(name, tl, en, rubyLookup(tl))
+		prop, err := domain.NewProperties(name, tl, rubyLookup(tl))
 		if err != nil {
 			return nil, err
 		}

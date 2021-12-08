@@ -49,26 +49,21 @@ func NewFeature(featureType string, prop *Properties, geo *geojson.Geometry) (*F
 }
 
 type Properties struct {
-	ID           string `json:"name"`
-	JapaneseName string `json:"name_ja"`
-	EnglishName  string `json:"name_en"`
-	RubyText     string `json:"ruby_text"` // optional
+	ID                 string `json:"name"`
+	TargetLanguageName string `json:"name_tl"`
+	RubyText           string `json:"ruby_text"` // optional
 }
 
-func NewProperties(id, jp, en, ruby string) (*Properties, error) {
+func NewProperties(id, tl, ruby string) (*Properties, error) {
 	if id == "" {
 		return nil, errors.New("properties requires an id")
 	}
-	if jp == "" {
-		return nil, errors.New("properties must have a japanese name")
-	}
-	if en == "" {
-		return nil, errors.New("properties must have an english name")
+	if tl == "" {
+		return nil, errors.New("properties must have a tl name")
 	}
 	return &Properties{
-		ID:           id,
-		JapaneseName: jp,
-		EnglishName:  en,
-		RubyText:     ruby,
+		ID:                 id,
+		TargetLanguageName: tl,
+		RubyText:           ruby,
 	}, nil
 }

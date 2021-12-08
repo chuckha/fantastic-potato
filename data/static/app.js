@@ -15,14 +15,23 @@ fetch(`/api/get-country-data?country=${country}&target_language=${tl}`)
 const el = document.getElementById("korea")
 el.addEventListener("click", () => {
     clear();
+    init();
     fetch(`/api/get-country-data?country=korea&target_language=korean`)
     .then(resp => resp.json())
     .then(callback)
 });
 
+function init() {
+    map = new maplibregl.Map({
+        container: mapId,
+    });
+}
+
 function clear() {
+    document.getElementById('error-clicks').innerText = 0;
     map.removeLayer(divisionId);
     map.removeSource(sourceId);
+    map.remove();
 }
 
 function callback(obj) {
@@ -73,18 +82,6 @@ function callback(obj) {
     // shuffles the list
     // Game starts
 
-    const extractName = (feat) => {
-        let name = `<ruby>${feat.properties.name_ja}`
-        if (feat.properties.ruby_text) {
-            name = name + `<rt>${feat.properties.ruby_text}</rt>`
-        }
-        name = name + '</ruby>'
-        return {
-            name: feat.properties.name_ja,
-            nameHTML: name
-        }
-    }
-
     // add hiragana
 //    console.log(source._data.features)
     const data = source._data.features.map(extractName)
@@ -105,77 +102,6 @@ function callback(obj) {
         return Math.floor(Math.random() * max);
     }
 
-    // game data is a list of objects with a .nameHTML property
-
-    class Game {
-        constructor(country, data, labelEl, clicksEl) {
-            this.country = country
-            this.data = data;
-            this.label = labelEl;
-            this.updateLabel();
-            this.erroneousClicks = 0;
-            this.clicksEl = clicksEl;
-        }
-
-        updateLabel() {
-            this.label.innerHTML = data[0].nameHTML;
-        }
-
-        victory() {
-            localStorage.setItem(Date.now(), {
-                "erroneous clicks": this.erroneousClicks,
-                "country": this.country
-            });
-            this.label.innerHTML = 'Good job! Refresh to play again!';
-        }
-
-        updateErroneousClicks() {
-            this.erroneousClicks++;
-            this.clicksEl.innerText = this.erroneousClicks;
-        }
-
-        correct(input) {
-            if (input === this.data[0].name) {
-                this.data.shift();
-                if (this.data.length == 0) {
-                    this.victory();
-                    return true;
-                }
-                this.updateLabel();
-                return true;
-            }
-            this.updateErroneousClicks();
-            return false;
-        }
-    }
-
-    class Filler {
-        constructor() {
-            this.ids = [];
-        }
-        fill(id) {
-            this.ids.push(id)
-            map.setFeatureState({
-                source: sourceId,
-                id: id
-            }, {
-                clicked: true
-            })
-        }
-        reset() {
-            this.ids.forEach(id => this.unfill(id));
-            this.ids.length = 0;
-        }
-        unfill(id) {
-            map.setFeatureState({
-                source: sourceId,
-                id:id
-            }, {
-                clicked: false
-            })
-        }
-    }
-
     const game = new Game(country, quiz, document.getElementById('current'), document.getElementById('error-clicks'));
     const filler = new Filler();
     const correct = [];
@@ -189,7 +115,7 @@ function callback(obj) {
         if (e.features[0].state.clicked === true) {
             return;
         }
-        const clickedon = e.features[0].properties.name_ja;
+        const clickedon = e.features[0].properties.name_tl;
         if (game.correct(clickedon)) {
             correct.push(e.features[0].id)
             map.setFeatureState({
@@ -204,6 +130,88 @@ function callback(obj) {
         }
     });
 }
+
+const extractName = (feat) => {
+    let name = `<ruby>${feat.properties.name_tl}`
+    if (feat.properties.ruby_text) {
+        name = name + `<rt>${feat.properties.ruby_text}</rt>`
+    }
+    name = name + '</ruby>'
+    return {
+        name: feat.properties.name_tl,
+        nameHTML: name
+    }
+}
+
+class Filler {
+    constructor() {
+        this.ids = [];
+    }
+    fill(id) {
+        this.ids.push(id)
+        map.setFeatureState({
+            source: sourceId,
+            id: id
+        }, {
+            clicked: true
+        })
+    }
+    reset() {
+        this.ids.forEach(id => this.unfill(id));
+        this.ids.length = 0;
+    }
+    unfill(id) {
+        map.setFeatureState({
+            source: sourceId,
+            id:id
+        }, {
+            clicked: false
+        })
+    }
+}
+
+class Game {
+    constructor(country, data, labelEl, clicksEl) {
+        this.country = country
+        this.data = data;
+        this.label = labelEl;
+        this.updateLabel();
+        this.erroneousClicks = 0;
+        this.clicksEl = clicksEl;
+    }
+
+    updateLabel() {
+        this.label.innerHTML = this.data[0].nameHTML;
+    }
+
+    victory() {
+        localStorage.setItem(Date.now(), {
+            "erroneous clicks": this.erroneousClicks,
+            "country": this.country
+        });
+        this.label.innerHTML = 'Good job! Refresh to play again!';
+    }
+
+    updateErroneousClicks() {
+        this.erroneousClicks++;
+        this.clicksEl.innerText = this.erroneousClicks;
+    }
+
+    correct(input) {
+        if (input === this.data[0].name) {
+            this.data.shift();
+            if (this.data.length == 0) {
+                this.victory();
+                return true;
+            }
+            this.updateLabel();
+            return true;
+        }
+        this.updateErroneousClicks();
+        return false;
+    }
+}
+
 
 
 // domain 1: application supports email auth
@@ -221,3 +229,4 @@ function callback(obj) {
 //           core here is an app that gets geojson data from <somewhere>
 //           it turns that geojson data into quiz-friendly data and returns it
 //           what is quiz friendly data?
+
