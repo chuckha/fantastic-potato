@@ -1,6 +1,16 @@
 {{define "body"}}
-<h1>Find: <span id="current">???</span></h1>
-<h6>Wrong guesses: <span id="error-clicks">0</span></h6>
-<div>click the flag to change the game: <span class="flag" id="korea">🇰🇷</span></div>
 <div id="map"></div>
+
+<div class="map-overlay top">
+    <div class="map-overlay inner">
+        <h1>Find: <span id="current">???</span></h1>
+        <h6>Wrong guesses: <span id="error-clicks">0</span></h6>
+    </div>
+</div>
+
+<div class="map-overlay bottom">
+    <div >
+        <span class="flag" id="korea">🇰🇷</span>
+    </div>
+</div>
 {{end}}

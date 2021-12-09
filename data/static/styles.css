@@ -1,13 +1,44 @@
 body {
-    background: #999;
+    margin: 0;
+    padding: 0;
 }
 
 #map {
     background: #fff;
-    height:1000px;
-    width: 1000px;
+   position: absolute;
+   top: 0;
+   bottom: 0;
+   width: 100%;
 }
 
 .flag {
     font-size: 40px;
+}
+
+.map-overlay {
+/*    font: 12px/20px 'Helvetica Neue', Arial, Helvetica, sans-serif;*/
+    position: absolute;
+    padding: 10px;
+    width: 50%;
+}
+
+.map-overlay.top {
+    top: 0;
+    left: 0;
+}
+
+.map-overlay.bottom {
+    bottom: 0;
+    left: 0;
+}
+
+.map-overlay .inner {
+    background-color: #fff;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+    border-radius: 10px;
+    padding: 10px;
+}
+
+.flag {
+    cursor: pointer;
 }
